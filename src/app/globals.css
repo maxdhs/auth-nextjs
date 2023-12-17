@@ -1,0 +1,8 @@
+.post-container {
+  border: 2px solid black;
+  margin-top: 5px;
+}
+
+.child-post-container {
+  margin-left: 10px;
+}

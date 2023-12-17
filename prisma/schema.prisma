@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  username   String      @unique
+  password   String
+  subreddits Subreddit[]
+  posts      Post[]
+  votes      Vote[]
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  message     String
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  subredditId String
+  votes       Vote[]
+  parent      Post?     @relation("post", fields: [parentId], references: [id])
+  children    Post[]    @relation("post")
+  parentId    String?
+}
+
+model Subreddit {
+  id     String @id @default(uuid())
+  name   String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  posts  Post[]
+}
+
+model Vote {
+  id       String  @id @default(uuid())
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String
+  post     Post    @relation(fields: [postId], references: [id])
+  postId   String
+  isUpvote Boolean
+}
